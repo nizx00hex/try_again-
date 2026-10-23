@@ -2,8 +2,8 @@
 
 ### Web Development, Practice
 
-> HTMX PRACTICE
-> API DEVELOPMENT
+> HTMX PRACTICE,
+> API DEVELOPMENT,
 > MODELS WRITING
 
 ```php
