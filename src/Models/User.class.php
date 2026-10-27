@@ -77,22 +77,61 @@ class User
         return $stmt->fetchColumn() !== false;
     }
 
-    public static function _findByUsername($username) {
-        $db = Database::connect();
+    // public static function _findByUsername($username) {
+    //     $db = Database::connect();
 
-        $username = trim($username);
+    //     $username = trim($username);
 
-        $sql = "SELECT id, username, email, password
-                FROM users
-                WHERE username = :username
-                LIMIT 1";
+    //     $sql = "SELECT id, username, email, password
+    //             FROM users
+    //             WHERE username = :username
+    //             LIMIT 1";
 
-        $stmt = $db->prepare($sql);
-        $stmt->execute([
-            ':username' => $username
-        ]);
+    //     $stmt = $db->prepare($sql);
+    //     $stmt->execute([
+    //         ':username' => $username
+    //     ]);
 
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+    //     return $stmt->fetch(PDO::FETCH_ASSOC);
+    // }
+
+
+    public static function _find(string $value, ?string $field = null): ?array
+    {
+        $value = trim($value);
+
+        if ($value === '') {
+            return null;
+        }
+
+        $columns = 'id, firstname, secondname, username, email, password, created_at, updated_at, status, is_verified';
+        
+        // Login mode: email OR username
+        if ($field === null) {
+            
+            if (str_contains($value, '@')) {
+                $value = mb_strtolower($value);
+            }
+            $sql  = "SELECT {$columns} FROM users WHERE email = :email OR username = :username LIMIT 1";
+            $args = [':email' => $value, ':username' => $value];
+
+        } else {
+            // Specific field mode
+            if (!in_array($field, ['username', 'email'], true)) {
+                throw new InvalidArgumentException('Invalid field.');
+            }
+
+            if ($field === 'email') {
+                $value = mb_strtolower($value);
+            }
+            
+            $sql  = "SELECT {$columns} FROM users WHERE {$field} = :value LIMIT 1";
+            $args = [':value' => $value];
+        }
+
+        $stmt = Database::connect()->prepare($sql);
+        $stmt->execute($args);
+
+        return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
     }
-
 }

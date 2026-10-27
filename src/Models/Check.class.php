@@ -1,16 +1,14 @@
 <?php
-class Check {
-            // Checks for duplicate email or username.
-    public static function _duplicateAccount(string $email = null, string $username): void
+class Check
+{
+    public static function _duplicateAccount(string $email, string $username): void
     {
-        if (User::exists('username', $username)) {
+        if (User::_find($username, 'username') !== null) {
             throw new RuntimeException('This username is already taken.');
         }
 
-        if (User::exists('email', $email)) {
+        if (User::_find($email, 'email') !== null) {
             throw new RuntimeException('An account with this email already exists.');
         }
-
     }
-
 }

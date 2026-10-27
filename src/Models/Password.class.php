@@ -14,7 +14,7 @@ class Password
     ];
 
     // Validates password complexity, length, and common patterns.
-    public static function validate(string $password): void
+    public static function _validate(string $password): void
     {
         if (strlen($password) < self::MIN_LENGTH) {
             throw new InvalidArgumentException('Password must be at least ' . self::MIN_LENGTH . ' characters long.');
